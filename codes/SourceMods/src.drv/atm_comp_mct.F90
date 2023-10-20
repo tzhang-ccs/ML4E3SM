@@ -161,7 +161,6 @@ CONTAINS
                                 ! hdim2_d == 1.
     character(len=64) :: filein ! Input namelist filename
     integer :: kk
-    real(r8) start_t, end_t
     !-----------------------------------------------------------------------
     !
     ! Determine cdata points
@@ -193,10 +192,7 @@ CONTAINS
        call spmdinit(mpicom_atm, calc_proc_smp_map=.false.)
        
        !zhangtao init python env and load data
-       call cpu_time(start_t)
        kk =  ml_init()
-       call cpu_time(end_t)
-       print *, "Profile: Python Init  = ", end_t - start_t
 
        ! Redirect share output to cam log
        

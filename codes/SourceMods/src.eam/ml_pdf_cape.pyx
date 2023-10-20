@@ -30,10 +30,6 @@ cdef public void python_init():
     CAPE_model = torch.jit.load('/pscratch/sd/z/zhangtao/E3SMv2_1/F2010.ne30pg2_EC30to60E2r2_ML_Test_Framework/case_scripts/SourceMods/src.eam/pytorch/pytorch_model.pt')
     BCU_model = torch.jit.load('/pscratch/sd/z/zhangtao/E3SMv2_1/F2010.ne30pg2_EC30to60E2r2_ML_Test_Framework/case_scripts/SourceMods/src.eam/pytorch/pytorch_model.pt')
 
-    #CAPE_model = torch.jit.load('/global/cfs/projectdirs/e3sm/zhangtao/ML4E3SM_new/models/pytorch/pytorch_ANN.pt')
-    #BCU_model = torch.jit.load('/global/cfs/projectdirs/e3sm/zhangtao/ML4E3SM_new/models/pytorch/pytorch_ANN.pt')
-    #CAPE_model = torch.jit.load('/global/cfs/projectdirs/e3sm/zhangtao/ML4E3SM_new/models/pytorch/pytorch_ResNet.pt')
-    #BCU_model = torch.jit.load('/global/cfs/projectdirs/e3sm/zhangtao/ML4E3SM_new/models/pytorch/pytorch_ResNet.pt')
     print("After load model")
     #CAPE_json = open(f'{file_path}/E3SM_ML_PDF_CAPE.json','r').read()
     #BCU_json  = open(f'{file_path}/E3SM_ML_BCU.json', 'r').read()
@@ -166,31 +162,13 @@ def cape_pdf(pcols, temp, pres, qv):
 
     tqp_data = torch.from_numpy(np.expand_dims(tqp_data,1)).float()
     extra_data = torch.from_numpy(extra_data[:,0,:]).float()
-    #tqp_data = torch.from_numpy(np.expand_dims(tqp_data,1)).repeat(1,3,1,1).float()
-    #extra_data = torch.from_numpy(extra_data[:,0,:]).repeat(1,3,1,1).float()
     
-    time1 = time.time()
     CAPE_model.eval()
-    #with torch.no_grad():
-        # CNN
-        #BCU = CAPE_model(tqp_data,extra_data).numpy()
-        #CAPE = CAPE_model(tqp_data,extra_data).numpy()
+    with torch.no_grad():
+        BCU = CAPE_model(tqp_data,extra_data).numpy()
+        CAPE = CAPE_model(tqp_data,extra_data).numpy()
 
-    BCU = np.zeros((9,1))
-    CAPE = np.zeros((9,1))
-        # ANN
-    print(BCU.shape)
-        #BCU = CAPE_model(tqp_data).numpy()
-        #CAPE = CAPE_model(tqp_data).numpy()
-        
-
-    time2 = time.time()
-    print(f'Time in Python: calculation  = {time2-time1:.2f}s')
-
-    #tqp_data = tf.convert_to_tensor(tqp_data,dtype=tf.float32)
-    #extra_data = tf.convert_to_tensor(extra_data,dtype=tf.float32)
-    #BCU = BCU_model.predict([tqp_data, extra_data], verbose=False)
-    #CAPE = CAPE_model.predict([tqp_data, extra_data], verbose=False)
+    print("after expectation_value")
 
     #tqp_data = tf.convert_to_tensor(tqp_data,dtype=tf.float32)
     #extra_data = tf.convert_to_tensor(extra_data,dtype=tf.float32)
@@ -206,6 +184,7 @@ def cape_pdf(pcols, temp, pres, qv):
     expectation_value = np.sum( cape_array * pdf_of_cape, axis=1)
 
     time2 = time.time()
+    print(f'Time in Python: calculation  = {time2-time1:.2f}s')
     del tqp_data 
     del extra_data
     del temp 

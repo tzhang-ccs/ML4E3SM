@@ -680,10 +680,9 @@ subroutine zm_convr(lchnk   ,ncol    , &
    print *, "zhangtao before cape_ml_c"
    tmp = cape_ml_c(pcols, pver, t,p,q, cape_m)
    call cpu_time(end_t)
-
    !print *, "cape_m in Fortran1 ",cape_m(:,1)
    !print *, "cape_m in Fortran2 ",cape_m(:,2)
-   print *, "Profile: Python CAPE = ", end_t - start_t
+   !print *, "ML time Profile: Fortran = ", end_t - start_t
    !call exit(11)
 !
 ! determine whether grid points will undergo some deep convection
